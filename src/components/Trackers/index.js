@@ -21,7 +21,7 @@ const Trackers = (props) => {
           id: trackerId, 
           name: trackerName,
           date: trackerDate,
-          isStopped: false  
+          time: null  
         };
         
     setTrackers([ ...trackersData, { ...tracker } ]);
@@ -36,11 +36,11 @@ const Trackers = (props) => {
     setTrackers(changedTrackersData); 
   }
 
-  const handleIsStopped = (trackerId) => {
+  const stopTracker = (trackerId, time) => {
     let changedTrackersData = trackersData
       .map(tracker => {
         return tracker.id === trackerId 
-          ? {...tracker, isStopped: !tracker.isStopped} 
+          ? {...tracker, time} 
           : tracker
       })
 
@@ -51,7 +51,7 @@ const Trackers = (props) => {
     .map(tracker => <TrackerCard 
                       key={tracker.id} 
                       tracker={tracker} 
-                      handleIsStopped={handleIsStopped}
+                      stopTracker={stopTracker}
                       deleteTracker={deleteTracker}/>)
 
   return (

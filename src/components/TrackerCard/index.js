@@ -17,10 +17,11 @@ const getTimeInterval = (date) => {
 }
 
 const TrackerCard = (props) => {
-  const { tracker: { id, name, date, isStopped }, handleIsStopped, deleteTracker } = props;
+  const { tracker: { id, name, date, time }, stopTracker, deleteTracker } = props;
 
+  const isStopped = time !== null;
   const [timerId, setTimerId] = React.useState(null);
-  const [timeInterval , setTimeInterval] = React.useState(getTimeInterval(date));
+  const [timeInterval , setTimeInterval] = React.useState(isStopped ? time : getTimeInterval(date));
   
   const handleDelete = () => {
     if(timerId) {
@@ -31,17 +32,17 @@ const TrackerCard = (props) => {
 
   const startTimer = React.useCallback(() => {
     if(isStopped) {
-      handleIsStopped(id);
+      stopTracker(id, null);
     }
     let timerId = setInterval(() => setTimeInterval(getTimeInterval(date)), 1000);
     setTimerId(timerId);
-  }, [isStopped, handleIsStopped, id, setTimerId, date]);
+  }, [isStopped, stopTracker, id, setTimerId, date]);
 
   const stopTimer = React.useCallback(() => {
-    handleIsStopped(id);
+    stopTracker(id, timeInterval);
     clearInterval(timerId);
     setTimerId(null);
-  }, [handleIsStopped, id, timerId, setTimerId]);
+  }, [stopTracker, id, timeInterval, timerId, setTimerId]);
 
   React.useEffect(() => {
     if(!isStopped && timerId === null) {
@@ -51,7 +52,7 @@ const TrackerCard = (props) => {
 
   return (
     <List.Item 
-      style={isStopped 
+      style={isStopped
         ? styles.card
         : styles.cardActive}>
       <List.Content 
